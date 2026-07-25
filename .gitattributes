@@ -9,3 +9,4 @@
 /.gitignore        export-ignore
 /.github/          export-ignore
 /tests/            export-ignore
+/CHANGELOG.md      export-ignore
