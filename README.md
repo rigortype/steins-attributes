@@ -51,22 +51,36 @@ The core taxonomy: `output`, `output.header`; `io`, `io.fs`, `io.fs.read`,
 `failure.input`, `failure.resource`. Anything else is reported as
 `effect.unknown-label` — typo safety is the analyzer's job.
 
-## Why this is a separate package, and MIT
+## Why this is its own package
 
-The analyzer is a Rust binary under Apache-2.0. These attributes are
-**vocabulary**, not tooling: they live in your `require-dev` and are referenced
-from your own source, and their spread is the point — other tools reading
-`#[\Steins\Effect]` would be a win. MIT is the lowest-friction licence for two
-inert classes.
+Not licence strategy. The analyzer is Apache-2.0 and this is MIT, but both are
+permissive and the practical difference to anyone using either is close to
+nothing — what actually differs is how long the text is and how widely the name
+is recognized.
 
-`composer require --dev rigortype/steins` pulls this package in, so most users
-never install it directly.
+The reason is that you may not want the analyzer. These two classes are
+vocabulary: you write them in your own source, and they mean something to any
+tool that reads them. Installing this package **on its own** is a perfectly
+sensible thing to do — annotate now, decide about a Rust binary later, or never.
 
-Steins reads the attributes **syntactically** and does not require the classes
-to exist — it will not report `Steins\Pure` as an undefined class if this
-package is absent. Everything else will: PHP fatals if the attribute is
-instantiated through reflection, and other analyzers and IDEs see an import of a
-class that is not there. Install it.
+```
+composer require --dev rigortype/steins-attributes
+```
+
+`--dev` is enough, and not as a matter of convention. The classes are inert, and
+measurably so: code declaring `#[Pure]` or `#[Effect(...)]` runs with them
+absent from the installation entirely, and even
+`ReflectionFunction::getAttributes()` still reports the attribute's name. Only
+`newInstance()` — actually constructing the attribute object — needs the class
+to exist, and that is something a development tool does, never your application.
+
+Nothing forces the install either. Steins reads the attributes **syntactically**
+and will not report `Steins\Pure` as an undefined class when the package is
+absent. Your IDE and your other analyzers will, and they are right to: an import
+of a class that is not there is worth flagging.
+
+Installing the analyzer with `composer require --dev rigortype/steins` brings
+this package along, so most users never add it explicitly.
 
 ## Recognized spellings
 
