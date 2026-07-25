@@ -1,13 +1,11 @@
 # PHP;STEINS Attributes
 
 Effect-envelope attributes for [PHP;STEINS](https://github.com/rigortype/steins), a
-value-precise static analyzer for PHP.
+value-precise static analyzer for PHP. Two classes, both inert at runtime.
 
 ```
 composer require --dev typedduck/steins-attributes
 ```
-
-Two classes, both inert at runtime:
 
 ```php
 use Steins\Effect;
@@ -26,50 +24,28 @@ function appendAudit(string $line): void
 }
 ```
 
-An envelope is an upper bound you assert, not a description the analyzer
-derives. Steins reports what the envelope does not admit; declaring more than
-the body does is fine. Checking uses **prefix subsumption** — a declared `io`
-admits an inferred `io.net.http` — so declarations stay as coarse as you like.
-`#[Pure]` is the empty envelope.
+An envelope is an upper bound you assert, and Steins reports what it does not
+admit. Checking is by prefix, so a declared `io` admits an inferred
+`io.net.http`. `#[Pure]` is the empty envelope.
 
-## Labels must be plain string literals
+**Labels must be plain string literals.** A class constant, a concatenation, or
+a named argument makes the whole attribute unrecognized — no envelope, no
+checking, silently. Which is why there is no constants class for them.
 
-A class constant, a concatenation, or a named argument makes the whole attribute
-**unrecognized** — no envelope, no checking, silently. Which is also why this
-package ships no constants class for the labels.
-
-The core taxonomy: `output`, `output.header`; `io`, `io.fs`, `io.fs.read`,
+Known labels: `output`, `output.header`; `io`, `io.fs`, `io.fs.read`,
 `io.fs.write`, `io.net`, `io.net.http`, `io.db`, `io.ipc`, `io.process`,
 `io.signal`; `global.read`, `global.write`; `nondet`, `nondet.random`,
 `nondet.time`; `mutate`, `exit`, `ffi`; `failure`, `failure.environment`,
 `failure.input`, `failure.resource`. Anything else is `effect.unknown-label`.
 
-## Recognized spellings
+Write them fully qualified, qualified, or bare under a `use` import
+(`use Steins\Pure as P;` makes `#[P]` work). A bare `#[Pure]` *without* the
+import is not recognized — JetBrains' `#[Pure]` is a different attribute.
 
-Fully qualified (`#[\Steins\Pure]`), qualified (`#[Steins\Pure]`), or
-bare/aliased under a `use` import — `use Steins\Pure as P;` makes `#[P]` work.
-
-A bare `#[Pure]` **without** the import is not recognized: JetBrains' `#[Pure]`
-is a different attribute, and matching it would impose checks its author never
-asked for.
-
-## Why this is its own package
-
-You may not want the analyzer. These are vocabulary — you write them in your own
-source, and they mean something to any tool that reads them — so installing this
-package alone is a perfectly good end state.
-
-`--dev` is enough as a fact, not a convention: code declaring `#[Pure]` or
-`#[Effect(...)]` runs with the classes absent entirely, and even
-`getAttributes()` still reports the name. Only `newInstance()` needs the class,
-and only a development tool calls it.
-
-Nothing forces the install, either. Steins reads the attributes syntactically
-and will not report `Steins\Pure` as undefined when the package is missing. Your
-IDE and your other analyzers will, and they are right to.
-
-`composer require --dev typedduck/steins` brings this package along, so most
-users never add it explicitly.
+`--dev` is right, and as a fact rather than a convention: code declaring these
+runs with the classes absent entirely, and only `newInstance()` needs them —
+which only a development tool calls. Installing them alone is a fine end state
+if you do not want the analyzer; installing the analyzer brings them along.
 
 ## Copyright
 
