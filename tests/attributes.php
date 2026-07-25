@@ -3,12 +3,9 @@
 
 // The classes exist, are inert, and target what the analyzer reads them on.
 //
-// There is very little to test in two attribute classes, and exactly one thing
-// worth testing: that PHP agrees with the analyzer about where they may appear.
-// Steins reads `#[Pure]` / `#[Effect]` on function and method declarations; if
-// the #[Attribute] targets here said something else, PHP would reject at
-// reflection time code the analyzer accepts, and the two would disagree about
-// the same file.
+// The last one is the point: Steins reads `#[Pure]` / `#[Effect]` on function
+// and method declarations, so if the #[Attribute] targets said anything else,
+// PHP would reject at reflection time the very code the analyzer accepts.
 //
 //     php tests/attributes.php
 
@@ -35,8 +32,7 @@ $ok = static function (string $label, bool $passed) use (&$failures, &$checks): 
     printf("  FAIL  %s\n", $label);
 };
 
-// The names the analyzer compares against, case-folded, are `steins\pure` and
-// `steins\effect`. Nothing else resolves.
+// The analyzer compares against `steins\pure` / `steins\effect`, case-folded.
 $ok('Steins\Pure exists', class_exists(Pure::class));
 $ok('Steins\Effect exists', class_exists(Effect::class));
 $ok('Pure is named Steins\Pure', Pure::class === 'Steins\Pure');
@@ -69,16 +65,12 @@ $expected = Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD;
 $ok('Pure targets functions and methods, and only those', $targetOf($pure) === $expected);
 $ok('Effect targets functions and methods, and only those', $targetOf($effect) === $expected);
 
-// Labels arrive as a variadic list because that is the only argument form the
-// analyzer reads — a named argument makes the whole attribute unrecognized.
 $e = new Effect('io.fs.write', 'nondet.time');
 $ok('Effect keeps its labels in order', $e->labels === ['io.fs.write', 'nondet.time']);
 $ok('Effect with no labels is the empty list', (new Effect())->labels === []);
 
-// Named arguments into a variadic collect with STRING KEYS, so a raw `$labels`
-// would not be a list and the `list<non-empty-string>` annotation would be a
-// lie. `array_values()` in the constructor is what makes it true — this pins
-// that, so nobody removes it as redundant.
+// Named arguments key a variadic by parameter name, so a raw `$labels` would
+// not be a list. This pins `array_values()` against being cleaned up.
 $ok(
     'named arguments still produce a list',
     array_is_list((new Effect(first: 'io', second: 'nondet.time'))->labels),

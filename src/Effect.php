@@ -5,14 +5,14 @@ declare(strict_types=1);
 namespace Steins;
 
 use Attribute;
+
 use function array_values;
 
 /**
  * Declares the effects a function or method is permitted to have.
  *
- * An effect label is a hierarchical dot-path string, and checking uses **prefix
- * subsumption**: a declared `io` admits an inferred `io.net.http`. Declarations
- * stay as coarse as the author wants while the catalog stays fine-grained.
+ * A label is a hierarchical dot-path, and checking uses prefix subsumption: a
+ * declared `io` admits an inferred `io.net.http`.
  *
  * ```php
  * use Steins\Effect;
@@ -24,42 +24,20 @@ use function array_values;
  * }
  * ```
  *
- * The envelope is an *upper bound* the author asserts. Steins reports an
- * `effect.*` finding when the body does something the envelope does not admit;
- * declaring more than the body does is allowed and is not reported.
+ * **Labels must be plain string literals.** A class constant, a concatenation,
+ * or a named argument makes the whole attribute unrecognized — no envelope, no
+ * checking, silently.
  *
- * ## Labels must be plain string literals
+ * Core taxonomy: `output`, `output.header`; `io`, `io.fs`, `io.fs.read`,
+ * `io.fs.write`, `io.net`, `io.net.http`, `io.db`, `io.ipc`, `io.process`,
+ * `io.signal`; `global.read`, `global.write`; `nondet`, `nondet.random`,
+ * `nondet.time`; `mutate`, `exit`, `ffi`; `failure`, `failure.environment`,
+ * `failure.input`, `failure.resource`. Anything else is `effect.unknown-label`.
  *
- * Steins reads the arguments syntactically, so every argument has to be a plain
- * string literal in the source. A class constant, a concatenation, or a named
- * argument makes the **whole attribute unrecognized** — which means no envelope
- * and *no checking at all*, silently. This is the conservative failure: Steins
- * never imposes checks it cannot read. It is also the reason this package ships
- * no constants class to reference here.
+ * Recognized fully qualified, qualified, or bare/aliased under a
+ * `use Steins\Effect;`. Only the first `Effect` on a declaration is read.
  *
- * ## The core label taxonomy
- *
- * An unrecognized label is reported as `effect.unknown-label` — typo safety is
- * the analyzer's job, not the author's. The core registry:
- *
- * - `output`, `output.header`
- * - `io`, `io.fs`, `io.fs.read`, `io.fs.write`, `io.net`, `io.net.http`,
- *   `io.db`, `io.ipc`, `io.process`, `io.signal`
- * - `global.read`, `global.write`
- * - `nondet`, `nondet.random`, `nondet.time`
- * - `mutate`, `exit`, `ffi`
- * - `failure`, `failure.environment`, `failure.input`, `failure.resource`
- *
- * Ecosystem and private labels (`io.redis`, `email.send`) are not yet
- * registrable and are reported as unknown for now.
- *
- * Steins recognizes this attribute when it is written fully qualified
- * (`#[\Steins\Effect(...)]`), qualified (`#[Steins\Effect(...)]`), or
- * bare/aliased under a `use Steins\Effect;`. Only the first `Effect` attribute
- * on a declaration is read.
- *
- * Runtime behaviour: none. This class is inert; `$labels` is kept so
- * reflection-based tooling can read what was declared.
+ * Inert at runtime; `$labels` is kept for reflection-based tooling.
  *
  * @see Pure for the empty envelope.
  */
@@ -74,6 +52,8 @@ final class Effect
      */
     public function __construct(string ...$labels)
     {
+        // Named arguments key a variadic by parameter name, so this is what
+        // makes the `list<>` above true. Not redundant.
         $this->labels = array_values($labels);
     }
 }
