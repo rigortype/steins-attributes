@@ -75,6 +75,15 @@ $e = new Effect('io.fs.write', 'nondet.time');
 $ok('Effect keeps its labels in order', $e->labels === ['io.fs.write', 'nondet.time']);
 $ok('Effect with no labels is the empty list', (new Effect())->labels === []);
 
+// Named arguments into a variadic collect with STRING KEYS, so a raw `$labels`
+// would not be a list and the `list<non-empty-string>` annotation would be a
+// lie. `array_values()` in the constructor is what makes it true — this pins
+// that, so nobody removes it as redundant.
+$ok(
+    'named arguments still produce a list',
+    array_is_list((new Effect(first: 'io', second: 'nondet.time'))->labels),
+);
+
 // The round trip an IDE or a reflection-based tool would make.
 $fn = new ReflectionFunction(
     #[Effect('io.fs.read')]

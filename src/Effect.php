@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Steins;
 
 use Attribute;
+use function array_values;
 
 /**
  * Declares the effects a function or method is permitted to have.
@@ -65,13 +66,11 @@ use Attribute;
 #[Attribute(Attribute::TARGET_FUNCTION | Attribute::TARGET_METHOD)]
 final class Effect
 {
-    /**
-     * @var list<string>
-     */
+    /** @var list<non-empty-string> */
     public readonly array $labels;
 
     /**
-     * @param string ...$labels Effect labels, as plain string literals.
+     * @param non-empty-string ...$labels Effect labels, as plain string literals.
      */
     public function __construct(string ...$labels)
     {
