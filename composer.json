@@ -1,0 +1,31 @@
+{
+    "name": "rigortype/steins-attributes",
+    "description": "Effect-envelope attributes for the PHP;STEINS static analyzer: #[Pure] and #[Effect]. Inert at runtime, MIT so they can spread.",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://github.com/rigortype/steins-attributes",
+    "authors": [
+        {
+            "name": "USAMI Kenta",
+            "email": "tadsan@zonu.me"
+        }
+    ],
+    "keywords": [
+        "static analysis",
+        "attributes",
+        "effects",
+        "purity"
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Steins\\": "src/"
+        }
+    },
+    "support": {
+        "issues": "https://github.com/rigortype/steins/issues",
+        "source": "https://github.com/rigortype/steins-attributes"
+    }
+}
