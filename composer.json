@@ -1,6 +1,6 @@
 {
     "name": "typedduck/steins-attributes",
-    "description": "Effect-envelope attributes for the PHP;STEINS static analyzer: #[Pure] and #[Effect]. Inert at runtime, MIT so they can spread.",
+    "description": "Effect-envelope attributes for the PHP;STEINS static analyzer: #[Pure] and #[Effect]. Inert at runtime.",
     "type": "library",
     "license": "MIT",
     "homepage": "https://github.com/rigortype/steins-attributes",
