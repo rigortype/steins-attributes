@@ -1,5 +1,5 @@
 {
-    "name": "rigortype/steins-attributes",
+    "name": "typedduck/steins-attributes",
     "description": "Effect-envelope attributes for the PHP;STEINS static analyzer: #[Pure] and #[Effect]. Inert at runtime, MIT so they can spread.",
     "type": "library",
     "license": "MIT",

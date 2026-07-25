@@ -4,7 +4,7 @@ Effect-envelope attributes for [PHP;STEINS](https://github.com/rigortype/steins)
 value-precise static analyzer for PHP.
 
 ```
-composer require --dev rigortype/steins-attributes
+composer require --dev typedduck/steins-attributes
 ```
 
 Two classes, both inert at runtime:
@@ -68,7 +68,7 @@ Nothing forces the install, either. Steins reads the attributes syntactically
 and will not report `Steins\Pure` as undefined when the package is missing. Your
 IDE and your other analyzers will, and they are right to.
 
-`composer require --dev rigortype/steins` brings this package along, so most
+`composer require --dev typedduck/steins` brings this package along, so most
 users never add it explicitly.
 
 ## Copyright
